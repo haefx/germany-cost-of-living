@@ -1,4 +1,4 @@
-i# Germany Cost of Living Reality Check
+# Germany Cost of Living Reality Check
 
 ## 🎯 Das Problem
 
