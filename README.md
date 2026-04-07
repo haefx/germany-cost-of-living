@@ -6,7 +6,8 @@ Alle reden über Inflation und steigende Mieten — aber niemand zeigt konkret, 
 
 ## 📊 Demo Screenshot
 
-→ <img width="1467" height="735" alt="image" src="https://github.com/user-attachments/assets/4192f012-c792-4b80-9373-4e9bad44c4d4" />
+<img width="1908" height="915" alt="image" src="https://github.com/user-attachments/assets/1572e946-c6e0-4b74-ac8e-21959d63328f" />
+
 
 
 ## 🛠 Tech Stack
