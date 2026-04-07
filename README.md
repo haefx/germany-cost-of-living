@@ -2,14 +2,15 @@
 
 ## 🎯 Das Problem
 
-Alle reden über Inflation und steigende Mieten - aber niemand zeigt konkret, wie viel am Ende des Monats übrig bleibt. Dieses Tool kombiniert Gehaltsdaten, Mietpreise und Lebenshaltungskosten für 10 deutsche Städte zu einer ehrlichen Antwort.
+Alle reden über Inflation und steigende Mieten — aber niemand zeigt konkret, wie viel am Ende des Monats übrig bleibt. Dieses Tool kombiniert Gehaltsdaten, Mietpreise und Lebenshaltungskosten für 10 deutsche Städte zu einer ehrlichen Antwort.
+
+## 🌐 Live Demo
+
+**[cost-demo.sd-rp.de](https://cost-demo.sd-rp.de/)**
 
 ## 📊 Demo Screenshot
 
-<img width="1826" height="831" alt="image" src="https://github.com/user-attachments/assets/685975e3-7239-4bc1-aae9-b78cd7e355a0" />
-
-<img width="1631" height="863" alt="image" src="https://github.com/user-attachments/assets/a3d1bfca-ad7d-42b4-b34c-f3b4f359b3ac" />
-
+→ <img width="1467" height="735" alt="image" src="https://github.com/user-attachments/assets/4192f012-c792-4b80-9373-4e9bad44c4d4" />
 
 
 ## 🛠 Tech Stack
@@ -21,11 +22,11 @@ Datenquellen: Destatis, Bundesagentur für Arbeit, BBSR Wohnatlas
 ## 🚀 Lokal starten
 
 ```bash
-pip install -r requirements.txt
-python src/pipeline.py
-streamlit run app/streamlit_app.py
+py pip install -r requirements.txt
+py src/pipeline.py
+py streamlit run app/streamlit_app.py
 ```
 
 ## 🧠 Was ich dabei gelernt habe
 
-*TODO*
+*TODO: Kurzer Abschnitt über SQL Joins, Pandas Cleaning-Herausforderungen, Datenqualität.*
