@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # DB-Verzeichnis anlegen und Seed ausführen
-RUN mkdir -p data && python src/seed_data.py
+RUN mkdir -p data && python -c "import sys; sys.path.insert(0, 'src'); from db import init_db; init_db()" && python src/seed_data.py
 
 EXPOSE 8501
 
