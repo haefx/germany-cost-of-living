@@ -8,14 +8,17 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_settings
-from .routers import auth, categories
+from .routers import auth, categories, demo
+from .scheduler import start_scheduler, stop_scheduler
 
 settings = get_settings()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    start_scheduler()
     yield
+    stop_scheduler()
 
 
 app = FastAPI(
@@ -37,6 +40,7 @@ app.add_middleware(
 
 app.include_router(auth.router, prefix="/api")
 app.include_router(categories.router, prefix="/api")
+app.include_router(demo.router, prefix="/api")
 
 
 @app.get("/health", tags=["system"])
