@@ -25,7 +25,7 @@ class RecurrenceRule:
     end_date: date | None = None
 
 
-def _add_months(source: date, months: int) -> date:
+def add_months(source: date, months: int) -> date:
     total_month_index = source.month - 1 + months
     year = source.year + total_month_index // 12
     month = total_month_index % 12 + 1
@@ -69,7 +69,7 @@ def _nth_occurrence(rule: RecurrenceRule, step: int) -> date:
     if rule.frequency == "weekly":
         return date.fromordinal(rule.start_date.toordinal() + 7 * offset)
     if rule.frequency == "monthly":
-        return _add_months(rule.start_date, offset)
+        return add_months(rule.start_date, offset)
     # yearly
     try:
         return rule.start_date.replace(year=rule.start_date.year + offset)

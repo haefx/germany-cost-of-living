@@ -14,6 +14,7 @@ from __future__ import annotations
 import enum
 import uuid
 from datetime import datetime
+from decimal import Decimal
 
 from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Integer, Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
@@ -85,7 +86,7 @@ class SalarySnapshot(Base, UUIDPrimaryKeyMixin):
     import_run_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("import_run.id", ondelete="CASCADE"), nullable=False
     )
-    median_gross: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+    median_gross: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     year: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
@@ -98,8 +99,8 @@ class RentSnapshot(Base, UUIDPrimaryKeyMixin):
     import_run_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("import_run.id", ondelete="CASCADE"), nullable=False
     )
-    sqm_cold: Mapped[float] = mapped_column(Numeric(6, 2), nullable=False)
-    avg_apartment_size: Mapped[float] = mapped_column(Numeric(6, 2), nullable=False)
+    sqm_cold: Mapped[Decimal] = mapped_column(Numeric(6, 2), nullable=False)
+    avg_apartment_size: Mapped[Decimal] = mapped_column(Numeric(6, 2), nullable=False)
     year: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
@@ -112,9 +113,9 @@ class CostSnapshot(Base, UUIDPrimaryKeyMixin):
     import_run_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("import_run.id", ondelete="CASCADE"), nullable=False
     )
-    groceries_month: Mapped[float] = mapped_column(Numeric(8, 2), nullable=False)
-    transport_month: Mapped[float] = mapped_column(Numeric(8, 2), nullable=False)
-    utilities_month: Mapped[float] = mapped_column(Numeric(8, 2), nullable=False)
+    groceries_month: Mapped[Decimal] = mapped_column(Numeric(8, 2), nullable=False)
+    transport_month: Mapped[Decimal] = mapped_column(Numeric(8, 2), nullable=False)
+    utilities_month: Mapped[Decimal] = mapped_column(Numeric(8, 2), nullable=False)
     year: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
@@ -127,7 +128,7 @@ class InflationSnapshot(Base, UUIDPrimaryKeyMixin):
     import_run_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("import_run.id", ondelete="CASCADE"), nullable=False
     )
-    rate_pct: Mapped[float] = mapped_column(Numeric(5, 2), nullable=False)
+    rate_pct: Mapped[Decimal] = mapped_column(Numeric(5, 2), nullable=False)
     year: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
