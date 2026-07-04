@@ -19,7 +19,9 @@ target_metadata = Base.metadata
 
 
 def get_url() -> str:
-    return get_settings().database_url
+    # Allows tests to point migrations at a different database by setting
+    # sqlalchemy.url on the Config object, without touching env vars.
+    return config.get_main_option("sqlalchemy.url") or get_settings().database_url
 
 
 def run_migrations_offline() -> None:
