@@ -1,0 +1,4 @@
+city,state,population,median_gross,sqm_cold,avg_apartment_size,groceries_month,transport_month,utilities_month,inflation_rate,year
+Testhausen,Testland,100000,3500,15.0,70,350,90,220,4.5,2023
+Extremstadt,Testland,50000,50000,15.0,70,350,90,220,4.5,2023
+Fehlerdorf,Testland,20000,,15.0,70,350,90,220,4.5,2023
