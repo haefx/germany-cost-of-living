@@ -8,7 +8,18 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_settings
-from .routers import account, auth, budgets, categories, data, demo, expenses, income, savings_goals
+from .routers import (
+    account,
+    auth,
+    budgets,
+    categories,
+    cities,
+    data,
+    demo,
+    expenses,
+    income,
+    savings_goals,
+)
 from .scheduler import start_scheduler, stop_scheduler
 
 settings = get_settings()
@@ -52,6 +63,7 @@ app.include_router(expenses.router, prefix="/api")
 app.include_router(budgets.router, prefix="/api")
 app.include_router(savings_goals.router, prefix="/api")
 app.include_router(data.router, prefix="/api")
+app.include_router(cities.router, prefix="/api")
 
 
 @app.get("/health", tags=["system"])
