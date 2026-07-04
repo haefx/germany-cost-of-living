@@ -16,6 +16,7 @@ from __future__ import annotations
 import enum
 import uuid
 from datetime import date
+from decimal import Decimal
 
 from sqlalchemy import Date, Enum, ForeignKey, Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
@@ -85,7 +86,7 @@ class IncomeEntry(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         UUID(as_uuid=True), ForeignKey("category.id", ondelete="SET NULL"), nullable=True
     )
     label: Mapped[str] = mapped_column(String(200), nullable=False)
-    amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
+    amount: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     entry_date: Mapped[date] = mapped_column(Date, nullable=False)
     is_recurring: Mapped[bool] = mapped_column(default=False, nullable=False)
     recurrence_rule_id: Mapped[uuid.UUID | None] = mapped_column(
@@ -109,7 +110,7 @@ class ExpenseEntry(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         UUID(as_uuid=True), ForeignKey("category.id", ondelete="SET NULL"), nullable=True
     )
     label: Mapped[str] = mapped_column(String(200), nullable=False)
-    amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
+    amount: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     entry_date: Mapped[date] = mapped_column(Date, nullable=False)
     is_recurring: Mapped[bool] = mapped_column(default=False, nullable=False)
     recurrence_rule_id: Mapped[uuid.UUID | None] = mapped_column(
@@ -132,7 +133,7 @@ class Budget(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     category_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("category.id", ondelete="CASCADE"), nullable=False
     )
-    monthly_limit: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+    monthly_limit: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     effective_from: Mapped[date] = mapped_column(Date, nullable=False)
     effective_to: Mapped[date | None] = mapped_column(Date, nullable=True)
 
@@ -144,7 +145,7 @@ class SavingsGoal(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         UUID(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"), nullable=False
     )
     name: Mapped[str] = mapped_column(String(200), nullable=False)
-    target_amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
+    target_amount: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     target_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     category_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("category.id", ondelete="SET NULL"), nullable=True
@@ -163,6 +164,6 @@ class SavingsGoalContribution(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     savings_goal_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("savings_goal.id", ondelete="CASCADE"), nullable=False
     )
-    amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
+    amount: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     contributed_on: Mapped[date] = mapped_column(Date, nullable=False)
     note: Mapped[str | None] = mapped_column(Text, nullable=True)

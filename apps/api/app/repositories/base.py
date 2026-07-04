@@ -27,7 +27,10 @@ from sqlalchemy.orm import Mapped
 
 class _UserOwnedModel(Protocol):
     id: Mapped[uuid.UUID]
-    user_id: Mapped[uuid.UUID | None]
+    # Typed loosely (some owned models allow a NULL user_id for global rows,
+    # e.g. Category) — Protocol attribute matching is invariant, so a precise
+    # `Mapped[uuid.UUID | None]` here would reject the non-nullable owners.
+    user_id: Mapped[Any]
 
 
 class UserOwnedRepository[ModelT: _UserOwnedModel]:

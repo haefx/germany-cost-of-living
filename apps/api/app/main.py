@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_settings
-from .routers import auth, categories, demo
+from .routers import account, auth, budgets, categories, data, demo, expenses, income, savings_goals
 from .scheduler import start_scheduler, stop_scheduler
 
 settings = get_settings()
@@ -38,9 +38,20 @@ app.add_middleware(
 )
 
 
+# account.router's DELETE /users/me must be registered before auth.router's
+# fastapi-users sub-router, whose DELETE /users/{id} would otherwise match
+# "me" as a literal {id} value first (Starlette matches routes in
+# registration order, not by specificity) and reject it as non-superuser
+# before our own route ever gets a chance. See test_account_deletion.py.
+app.include_router(account.router, prefix="/api")
 app.include_router(auth.router, prefix="/api")
 app.include_router(categories.router, prefix="/api")
 app.include_router(demo.router, prefix="/api")
+app.include_router(income.router, prefix="/api")
+app.include_router(expenses.router, prefix="/api")
+app.include_router(budgets.router, prefix="/api")
+app.include_router(savings_goals.router, prefix="/api")
+app.include_router(data.router, prefix="/api")
 
 
 @app.get("/health", tags=["system"])

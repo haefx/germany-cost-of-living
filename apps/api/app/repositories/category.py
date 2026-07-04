@@ -29,3 +29,16 @@ class CategoryRepository(UserOwnedRepository[Category]):
             .order_by(Category.kind, Category.name)
         )
         return list(result.scalars().all())
+
+    async def get_visible(self, user_id: uuid.UUID, category_id: uuid.UUID) -> Category | None:
+        """Like ``get``, but also returns global default categories — used
+        wherever a referenced category needs to be displayed (e.g. a
+        budget's category name), not just edited.
+        """
+        result = await self.session.execute(
+            select(Category).where(
+                Category.id == category_id,
+                or_(Category.user_id == user_id, Category.user_id.is_(None)),
+            )
+        )
+        return result.scalar_one_or_none()
