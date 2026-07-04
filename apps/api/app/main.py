@@ -18,6 +18,7 @@ from .routers import (
     demo,
     expenses,
     income,
+    insights,
     savings_goals,
 )
 from .scheduler import start_scheduler, stop_scheduler
@@ -64,6 +65,7 @@ app.include_router(budgets.router, prefix="/api")
 app.include_router(savings_goals.router, prefix="/api")
 app.include_router(data.router, prefix="/api")
 app.include_router(cities.router, prefix="/api")
+app.include_router(insights.router, prefix="/api")
 
 
 @app.get("/health", tags=["system"])
