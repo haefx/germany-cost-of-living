@@ -1,0 +1,11 @@
+city,state,population,median_gross,sqm_cold,avg_apartment_size,groceries_month,transport_month,utilities_month,inflation_rate,year
+Berlin,Berlin,3645000,3850,16.5,72,380,95,230,5.9,2023
+Hamburg,Hamburg,1841000,4100,17.8,70,390,109,240,5.9,2023
+München,Bayern,1488000,4600,22.5,68,420,57,260,5.9,2023
+Köln,Nordrhein-Westfalen,1084000,3750,15.2,72,370,103,225,5.9,2023
+Frankfurt am Main,Hessen,773000,4400,18.9,68,400,108,245,5.9,2023
+Stuttgart,Baden-Württemberg,626000,4250,17.4,70,390,93,235,5.9,2023
+Düsseldorf,Nordrhein-Westfalen,619000,3900,15.8,71,375,100,230,5.9,2023
+Leipzig,Sachsen,620000,3100,10.2,75,330,66,190,5.9,2023
+Dortmund,Nordrhein-Westfalen,588000,3300,10.8,74,340,95,195,5.9,2023
+Nürnberg,Bayern,515000,3700,13.5,72,355,98,210,5.9,2023
