@@ -2,7 +2,6 @@
 
 import { LogOut, User as UserIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +19,6 @@ import { useSession as useSessionQuery } from "@/hooks/use-session";
 
 export function UserMenu() {
   const t = useTranslations("topbar");
-  const router = useRouter();
   const { data: user } = useSessionQuery();
   const logout = useLogout();
   // Read the clock once per mount (not per render): render purity, and the
@@ -29,7 +27,9 @@ export function UserMenu() {
 
   async function handleLogout() {
     await logout.mutateAsync();
-    router.push("/login");
+    // Hard navigation across the auth-state change — prefetched routes were
+    // cached while logged in and would be stale (see login page).
+    window.location.assign("/login");
   }
 
   if (!user) return null;

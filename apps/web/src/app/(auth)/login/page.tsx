@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,6 @@ import { useLogin, useStartDemo } from "@/hooks/use-auth";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
-  const router = useRouter();
   const login = useLogin();
   const startDemo = useStartDemo();
   const [email, setEmail] = useState("");
@@ -23,7 +21,10 @@ export default function LoginPage() {
     event.preventDefault();
     try {
       await login.mutateAsync({ email, password });
-      router.push("/");
+      // Hard navigation, not router.push: the router may have prefetched "/"
+      // while logged out, caching the proxy's redirect-to-login response.
+      // A full load re-evaluates the proxy with the fresh session cookie.
+      window.location.assign("/");
     } catch {
       // error is surfaced via login.error below
     }
@@ -31,7 +32,7 @@ export default function LoginPage() {
 
   async function handleDemo() {
     await startDemo.mutateAsync();
-    router.push("/");
+    window.location.assign("/");
   }
 
   return (

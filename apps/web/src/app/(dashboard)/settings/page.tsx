@@ -2,7 +2,6 @@
 
 import { Download, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -22,14 +21,14 @@ import { useSession } from "@/hooks/use-session";
 export default function SettingsPage() {
   const t = useTranslations("settings");
   const tCommon = useTranslations("common");
-  const router = useRouter();
   const { data: user } = useSession();
   const deleteAccount = useDeleteAccount();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   async function handleDeleteAccount() {
     await deleteAccount.mutateAsync();
-    router.push("/login");
+    // Hard navigation across the auth-state change (see login page).
+    window.location.assign("/login");
   }
 
   return (
