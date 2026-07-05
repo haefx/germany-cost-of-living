@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,6 @@ import { useLogin, useRegister } from "@/hooks/use-auth";
 
 export default function RegisterPage() {
   const t = useTranslations("auth");
-  const router = useRouter();
   const register = useRegister();
   const login = useLogin();
   const [email, setEmail] = useState("");
@@ -26,7 +24,9 @@ export default function RegisterPage() {
     try {
       await register.mutateAsync({ email, password });
       await login.mutateAsync({ email, password });
-      router.push("/");
+      // Hard navigation: see login page for why router.push is not safe
+      // across an auth-state change.
+      window.location.assign("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : t("registerError"));
     }
