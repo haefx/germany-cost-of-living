@@ -27,9 +27,11 @@ ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
+# No COPY for apps/web/public: the app has no public assets yet, and git
+# does not track the empty directory, so the COPY would fail on a fresh
+# clone. Restore it when the first real asset lands in public/.
 COPY --from=build --chown=nextjs:nodejs /repo/apps/web/.next/standalone ./
 COPY --from=build --chown=nextjs:nodejs /repo/apps/web/.next/static ./apps/web/.next/static
-COPY --from=build --chown=nextjs:nodejs /repo/apps/web/public ./apps/web/public
 
 USER nextjs
 
