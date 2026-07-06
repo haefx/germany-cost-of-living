@@ -40,6 +40,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Documentation: architecture overview, three ADRs, data provenance,
   Phase 2 roadmap, initial audit.
 
+### Removed
+
+- The Streamlit prototype (`app/`, `src/`, `sql/`, `notebooks/`,
+  `.streamlit/`, root `Dockerfile`, `requirements.txt`) after feature parity
+  was reached; its state and problems remain documented in
+  [`docs/initial-audit.md`](docs/initial-audit.md).
+
 ## [0.1.0] - Streamlit prototype
 
 - Initial prototype: Streamlit UI, SQLite storage, Numbeo-scraping-based cost
