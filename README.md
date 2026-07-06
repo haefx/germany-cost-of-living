@@ -81,9 +81,11 @@ to the API on container port 8000), and uses production defaults
 each need a public domain **on the same site** (e.g. `app.example.com` +
 `api.example.com`) so the `SameSite=Lax` session cookie is sent; the public
 API URL is baked into the web image at build time by the publish workflow.
-Required environment variables: `SESSION_SECRET`, `POSTGRES_PASSWORD`, and
-`CORS_ORIGINS` (the web origin). After the first deploy, load the reference
-data once: `python -m app.pipeline.cli refresh` inside the api container.
+Required environment variables: `SESSION_SECRET`, `POSTGRES_PASSWORD`,
+`CORS_ORIGINS` (the web origin), and `COOKIE_DOMAIN` (the common parent
+domain of the web and API hosts, so the session cookie is visible to both).
+After the first deploy, load the reference data once:
+`python -m app.pipeline.cli refresh` inside the api container.
 
 ## Local development (without Docker)
 
