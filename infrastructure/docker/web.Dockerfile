@@ -2,14 +2,14 @@
 # web app resolves @gcol/shared-types from packages/shared via the npm
 # workspace.
 
-FROM node:24-alpine AS deps
+FROM node:26-alpine AS deps
 WORKDIR /repo
 COPY package.json package-lock.json ./
 COPY apps/web/package.json ./apps/web/
 COPY packages/shared/package.json ./packages/shared/
 RUN npm ci
 
-FROM node:24-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /repo
 COPY --from=deps /repo/node_modules ./node_modules
 COPY package.json package-lock.json ./
@@ -21,7 +21,7 @@ ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 RUN cd apps/web && npm run build
 
-FROM node:24-alpine AS runtime
+FROM node:26-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 
