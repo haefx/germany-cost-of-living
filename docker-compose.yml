@@ -38,6 +38,11 @@ services:
     build:
       context: .
       dockerfile: infrastructure/docker/web.Dockerfile
+      args:
+        # NEXT_PUBLIC_* values are inlined into the client bundle at build
+        # time; passing this only as a runtime variable would have no effect
+        # on browser code.
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
     restart: unless-stopped
     depends_on:
       - api

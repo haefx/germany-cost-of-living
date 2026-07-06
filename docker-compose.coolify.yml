@@ -1,0 +1,67 @@
+# Compose file for deploying behind Coolify (or any Traefik-style reverse
+# proxy that routes to container ports over a shared Docker network).
+#
+# Differences from docker-compose.yml (the local-development file):
+#   - No host port mappings: the proxy reaches web/api on the container
+#     network, Postgres stays internal-only, and nothing can collide with
+#     ports already used on the host (Coolify itself listens on 8000).
+#   - Production-leaning defaults (ENVIRONMENT, COOKIE_SECURE).
+#   - NEXT_PUBLIC_API_BASE_URL and CORS_ORIGINS are required, because there
+#     are no sensible defaults for public domains.
+#
+# In Coolify, set this file as the "Docker Compose Location" and assign a
+# domain to the web service (container port 3000) and to the api service
+# (container port 8000). See README "Deployment" for the full walkthrough.
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-gcol}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set a strong password in the Coolify environment}
+      POSTGRES_DB: ${POSTGRES_DB:-gcol}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-gcol}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "8000"
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-gcol}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-gcol}
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET must be set, see .env.example}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      CORS_ORIGINS: ${CORS_ORIGINS:?set to the public web origin, e.g. https://cost-demo.example.com}
+      DEMO_HOUSEHOLD_TTL_HOURS: ${DEMO_HOUSEHOLD_TTL_HOURS:-24}
+
+  web:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/web.Dockerfile
+      args:
+        # Inlined into the client bundle at build time — must be the
+        # public API URL as seen from the user's browser.
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:?set to the public API URL, e.g. https://api.cost-demo.example.com}
+    restart: unless-stopped
+    depends_on:
+      - api
+    expose:
+      - "3000"
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+
+volumes:
+  postgres_data:
