@@ -68,6 +68,21 @@ Web UI at [http://localhost:3000](http://localhost:3000), API docs at
 [http://localhost:8000/docs](http://localhost:8000/docs). Migrations run
 automatically when the API container starts.
 
+## Deployment (Coolify / reverse proxy)
+
+[docker-compose.coolify.yml](docker-compose.coolify.yml) is a production
+variant of the compose file for running behind Coolify or any Traefik-style
+proxy: no host port mappings (Postgres stays internal, the proxy routes to
+web on container port 3000 and to the API on container port 8000) and
+production defaults (`COOKIE_SECURE=true`). The browser calls the API
+directly, so web and API each need a public domain **on the same site**
+(e.g. `app.example.com` + `api.example.com`) so the `SameSite=Lax` session
+cookie is sent. Required environment variables: `SESSION_SECRET`,
+`POSTGRES_PASSWORD`, `CORS_ORIGINS` (the web origin), and
+`NEXT_PUBLIC_API_BASE_URL` (the public API URL — a **build-time** value
+inlined into the client bundle). After the first deploy, load the reference
+data once: `python -m app.pipeline.cli refresh` inside the api container.
+
 ## Local development (without Docker)
 
 Requires Python ≥ 3.12, Node ≥ 20, and a reachable PostgreSQL. The common
