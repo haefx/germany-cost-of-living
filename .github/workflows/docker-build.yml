@@ -14,6 +14,6 @@ jobs:
       # docker-compose.yml). Build-only value, never used to run anything.
       SESSION_SECRET: ci-build-only-dummy-secret
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build all images
         run: docker compose build
