@@ -37,7 +37,10 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
+# Uses node's built-in fetch instead of BusyBox wget: wget --spider issues a
+# HEAD request that the Next.js standalone server does not answer cleanly, and
+# "localhost" can resolve to IPv6 inside Alpine while the server binds IPv4.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD wget -q --spider http://localhost:3000/login || exit 1
+    CMD node -e "fetch('http://127.0.0.1:3000/login').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
 
 CMD ["node", "apps/web/server.js"]
