@@ -6,12 +6,23 @@
 #     network, Postgres stays internal-only, and nothing can collide with
 #     ports already used on the host (Coolify itself listens on 8000).
 #   - Production-leaning defaults (ENVIRONMENT, COOKIE_SECURE).
-#   - NEXT_PUBLIC_API_BASE_URL and CORS_ORIGINS are required, because there
-#     are no sensible defaults for public domains.
+#   - No `${VAR:?message}` guards: Coolify's compose parser does not
+#     implement that syntax and substitutes the message text as the value
+#     instead of failing the deploy.
 #
-# In Coolify, set this file as the "Docker Compose Location" and assign a
+# In Coolify, set this file as the "Docker Compose Location", assign a
 # domain to the web service (container port 3000) and to the api service
-# (container port 8000). See README "Deployment" for the full walkthrough.
+# (container port 8000), and set these variables in the resource's
+# Environment Variables tab (see README "Deployment"):
+#
+#   SESSION_SECRET            random 32+ byte value
+#   POSTGRES_PASSWORD         strong password (baked into the volume on
+#                             first start — changing it later requires an
+#                             ALTER USER or a fresh volume)
+#   CORS_ORIGINS              public web origin, e.g. https://app.example.com
+#   NEXT_PUBLIC_API_BASE_URL  public API URL, e.g. https://api.example.com —
+#                             MUST be marked as a build-time variable, it is
+#                             inlined into the client bundle
 
 services:
   postgres:
@@ -19,7 +30,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-gcol}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set a strong password in the Coolify environment}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB:-gcol}
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -42,9 +53,9 @@ services:
     environment:
       ENVIRONMENT: ${ENVIRONMENT:-production}
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-gcol}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-gcol}
-      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET must be set, see .env.example}
+      SESSION_SECRET: ${SESSION_SECRET}
       COOKIE_SECURE: ${COOKIE_SECURE:-true}
-      CORS_ORIGINS: ${CORS_ORIGINS:?set to the public web origin, e.g. https://cost-demo.example.com}
+      CORS_ORIGINS: ${CORS_ORIGINS}
       DEMO_HOUSEHOLD_TTL_HOURS: ${DEMO_HOUSEHOLD_TTL_HOURS:-24}
 
   web:
@@ -54,7 +65,7 @@ services:
       args:
         # Inlined into the client bundle at build time — must be the
         # public API URL as seen from the user's browser.
-        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:?set to the public API URL, e.g. https://api.cost-demo.example.com}
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
     restart: unless-stopped
     depends_on:
       - api
