@@ -46,11 +46,15 @@ async def test_deleting_account_cascades_finance_data(
     assert remaining_user is None
 
     remaining_income = (
-        await db_session.execute(select(IncomeEntry).where(IncomeEntry.user_id == user_id))
-    ).scalars().all()
+        (await db_session.execute(select(IncomeEntry).where(IncomeEntry.user_id == user_id)))
+        .scalars()
+        .all()
+    )
     remaining_expenses = (
-        await db_session.execute(select(ExpenseEntry).where(ExpenseEntry.user_id == user_id))
-    ).scalars().all()
+        (await db_session.execute(select(ExpenseEntry).where(ExpenseEntry.user_id == user_id)))
+        .scalars()
+        .all()
+    )
     assert remaining_income == []
     assert remaining_expenses == []
 

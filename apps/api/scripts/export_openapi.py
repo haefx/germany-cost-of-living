@@ -12,7 +12,9 @@ from pathlib import Path
 
 from app.main import app
 
-OUTPUT_PATH = Path(__file__).resolve().parents[3] / "packages" / "shared" / "openapi" / "openapi.json"
+OUTPUT_PATH = (
+    Path(__file__).resolve().parents[3] / "packages" / "shared" / "openapi" / "openapi.json"
+)
 
 
 def main() -> None:

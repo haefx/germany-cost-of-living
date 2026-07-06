@@ -40,9 +40,7 @@ class UserOwnedRepository[ModelT: _UserOwnedModel]:
         self.session = session
 
     async def list(self, user_id: uuid.UUID) -> list[ModelT]:
-        result = await self.session.execute(
-            select(self.model).where(self.model.user_id == user_id)
-        )
+        result = await self.session.execute(select(self.model).where(self.model.user_id == user_id))
         return list(result.scalars().all())
 
     async def get(self, user_id: uuid.UUID, entity_id: uuid.UUID) -> ModelT | None:
@@ -72,8 +70,6 @@ class UserOwnedRepository[ModelT: _UserOwnedModel]:
 
     async def delete(self, user_id: uuid.UUID, entity_id: uuid.UUID) -> bool:
         result = await self.session.execute(
-            sa_delete(self.model).where(
-                self.model.id == entity_id, self.model.user_id == user_id
-            )
+            sa_delete(self.model).where(self.model.id == entity_id, self.model.user_id == user_id)
         )
         return cast(CursorResult[Any], result).rowcount > 0

@@ -55,9 +55,7 @@ async def test_update_expense_entry(client: AsyncClient) -> None:
     )
     entry_id = create_response.json()["id"]
 
-    update_response = await client.patch(
-        f"/api/expenses/{entry_id}", json={"is_planned": True}
-    )
+    update_response = await client.patch(f"/api/expenses/{entry_id}", json={"is_planned": True})
     assert update_response.status_code == 200
     assert update_response.json()["is_planned"] is True
 

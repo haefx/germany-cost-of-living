@@ -40,7 +40,11 @@ async def test_insights_flags_budget_overrun(client: AsyncClient) -> None:
 
     await client.post(
         "/api/budgets",
-        json={"category_id": category_id, "monthly_limit": "100.00", "effective_from": "2026-06-01"},
+        json={
+            "category_id": category_id,
+            "monthly_limit": "100.00",
+            "effective_from": "2026-06-01",
+        },
     )
     await client.post(
         "/api/expenses",

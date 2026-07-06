@@ -26,9 +26,7 @@ async def create_category(
 async def update_category(
     repo: CategoryRepository, user_id: uuid.UUID, category_id: uuid.UUID, data: CategoryUpdate
 ) -> Category:
-    updated = await repo.update(
-        user_id, category_id, **data.model_dump(exclude_unset=True)
-    )
+    updated = await repo.update(user_id, category_id, **data.model_dump(exclude_unset=True))
     if updated is None:
         raise CategoryNotFoundError
     return updated
