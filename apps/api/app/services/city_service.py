@@ -107,9 +107,7 @@ async def _snapshot_for[SnapshotModel: Base](
     return result.scalar_one_or_none()
 
 
-async def _inflation_rate_for(
-    session: AsyncSession, city_id: uuid.UUID, import_run_id: uuid.UUID
-):
+async def _inflation_rate_for(session: AsyncSession, city_id: uuid.UUID, import_run_id: uuid.UUID):
     snapshot = await _snapshot_for(session, InflationSnapshot, city_id, import_run_id)
     return snapshot.rate_pct if snapshot else None
 

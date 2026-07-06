@@ -164,9 +164,7 @@ async def build_insight_context(
             )
         )
 
-    housing_category_id = next(
-        (c.id for c in categories if c.name == HOUSING_CATEGORY_NAME), None
-    )
+    housing_category_id = next((c.id for c in categories if c.name == HOUSING_CATEGORY_NAME), None)
     rent_amount = (
         _sum_amounts([e for e in current_expense_entries if e.category_id == housing_category_id])
         if housing_category_id
@@ -174,9 +172,7 @@ async def build_insight_context(
     )
 
     data_source_statuses = await get_data_source_statuses(session)
-    reference_status = next(
-        (s for s in data_source_statuses if s.key == DATA_SOURCE_KEY), None
-    )
+    reference_status = next((s for s in data_source_statuses if s.key == DATA_SOURCE_KEY), None)
 
     has_any_budgets = len(await budget_repo.list(user_id)) > 0
 

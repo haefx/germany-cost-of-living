@@ -91,9 +91,7 @@ async def add_contribution(
     return SavingsGoalContributionRead.model_validate(contribution)
 
 
-@router.delete(
-    "/{goal_id}/contributions/{contribution_id}", status_code=status.HTTP_204_NO_CONTENT
-)
+@router.delete("/{goal_id}/contributions/{contribution_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_contribution(
     goal_id: uuid.UUID,
     contribution_id: uuid.UUID,
