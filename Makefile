@@ -37,9 +37,10 @@ down:
 migrate:
 	docker compose exec api alembic upgrade head
 
+# Default categories are seeded by Alembic migration 0003; only the public
+# reference data needs an explicit pipeline run.
 seed:
 	docker compose exec api python -m app.pipeline.cli refresh
-	docker compose exec api python scripts/seed_categories.py
 
 demo-reset:
 	docker compose exec api python scripts/demo_reset.py
@@ -60,8 +61,11 @@ api-lint:
 	ruff check packages/analytics apps/api
 	ruff format --check packages/analytics apps/api
 
+# mypy reads its config from each package's pyproject.toml, so it must run
+# from inside the package directory.
 api-typecheck:
-	mypy packages/analytics/analytics apps/api/app
+	cd packages/analytics && mypy analytics
+	cd apps/api && mypy app
 
 web-install:
 	npm install --prefix apps/web
