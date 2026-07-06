@@ -5,6 +5,18 @@ __pycache__/
 .venv/
 venv/
 env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+
+# Node / Next.js
+node_modules/
+apps/web/.next/
+apps/web/out/
+apps/web/next-env.d.ts
+.turbo/
 
 # Jupyter
 .ipynb_checkpoints/
@@ -15,7 +27,9 @@ data/raw/
 data/processed/
 data/cost_of_living.db
 
-# Streamlit
+# Env and secrets
+.env
+.env.*.local
 .streamlit/secrets.toml
 
 # OS
@@ -25,3 +39,7 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Logs
+*.log
+*.tsbuildinfo
