@@ -2,6 +2,10 @@
 # proxy that routes to container ports over a shared Docker network).
 #
 # Differences from docker-compose.yml (the local-development file):
+#   - Pulls prebuilt images from GHCR instead of building on the server —
+#     the images are published by .github/workflows/docker-publish.yml on
+#     every push to main. The web image has NEXT_PUBLIC_API_BASE_URL baked
+#     in at build time (see that workflow), so no build happens here.
 #   - No host port mappings: the proxy reaches web/api on the container
 #     network, Postgres stays internal-only, and nothing can collide with
 #     ports already used on the host (Coolify itself listens on 8000).
@@ -20,9 +24,6 @@
 #                             first start — changing it later requires an
 #                             ALTER USER or a fresh volume)
 #   CORS_ORIGINS              public web origin, e.g. https://app.example.com
-#   NEXT_PUBLIC_API_BASE_URL  public API URL, e.g. https://api.example.com —
-#                             MUST be marked as a build-time variable, it is
-#                             inlined into the client bundle
 
 services:
   postgres:
@@ -41,9 +42,7 @@ services:
       retries: 10
 
   api:
-    build:
-      context: .
-      dockerfile: infrastructure/docker/api.Dockerfile
+    image: ghcr.io/haefx/germany-cost-of-living-api:latest
     restart: unless-stopped
     depends_on:
       postgres:
@@ -59,20 +58,12 @@ services:
       DEMO_HOUSEHOLD_TTL_HOURS: ${DEMO_HOUSEHOLD_TTL_HOURS:-24}
 
   web:
-    build:
-      context: .
-      dockerfile: infrastructure/docker/web.Dockerfile
-      args:
-        # Inlined into the client bundle at build time — must be the
-        # public API URL as seen from the user's browser.
-        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+    image: ghcr.io/haefx/germany-cost-of-living-web:latest
     restart: unless-stopped
     depends_on:
       - api
     expose:
       - "3000"
-    environment:
-      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
 
 volumes:
   postgres_data:
