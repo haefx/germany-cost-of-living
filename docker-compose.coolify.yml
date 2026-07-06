@@ -24,6 +24,11 @@
 #                             first start — changing it later requires an
 #                             ALTER USER or a fresh volume)
 #   CORS_ORIGINS              public web origin, e.g. https://app.example.com
+#   COOKIE_DOMAIN             common parent domain of web and API hosts,
+#                             e.g. app.example.com when the API runs on
+#                             api.app.example.com — without it the session
+#                             cookie stays host-only on the API domain and
+#                             the web app never sees a logged-in state
 
 services:
   postgres:
@@ -54,6 +59,7 @@ services:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-gcol}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-gcol}
       SESSION_SECRET: ${SESSION_SECRET}
       COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-}
       CORS_ORIGINS: ${CORS_ORIGINS}
       DEMO_HOUSEHOLD_TTL_HOURS: ${DEMO_HOUSEHOLD_TTL_HOURS:-24}
 

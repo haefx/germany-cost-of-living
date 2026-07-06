@@ -29,6 +29,7 @@ services:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-gcol}:${POSTGRES_PASSWORD:-gcol}@postgres:5432/${POSTGRES_DB:-gcol}
       SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET must be set, see .env.example}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
       DEMO_HOUSEHOLD_TTL_HOURS: ${DEMO_HOUSEHOLD_TTL_HOURS:-24}
     ports:
