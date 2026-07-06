@@ -1,0 +1,19 @@
+name: Docker build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  compose-build:
+    name: docker compose build
+    runs-on: ubuntu-latest
+    env:
+      # Compose refuses to interpolate without it (see the :? guard in
+      # docker-compose.yml). Build-only value, never used to run anything.
+      SESSION_SECRET: ci-build-only-dummy-secret
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build all images
+        run: docker compose build
