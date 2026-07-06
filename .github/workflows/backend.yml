@@ -1,0 +1,103 @@
+name: Backend
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint & typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install packages
+        run: |
+          pip install -e packages/analytics[dev]
+          pip install -e apps/api[dev]
+      - name: Ruff lint
+        run: ruff check packages/analytics apps/api
+      - name: Ruff format check
+        run: ruff format --check packages/analytics apps/api
+      - name: Mypy (analytics)
+        working-directory: packages/analytics
+        run: mypy analytics
+      - name: Mypy (api)
+        working-directory: apps/api
+        run: mypy app
+
+  analytics-tests:
+    name: Analytics tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install package
+        run: pip install -e packages/analytics[dev]
+      - name: Pytest
+        working-directory: packages/analytics
+        run: python -m pytest tests/ -q
+
+  api-tests:
+    name: API tests (Postgres)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: gcol
+          POSTGRES_PASSWORD: gcol
+          POSTGRES_DB: gcol_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U gcol"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install packages
+        run: |
+          pip install -e packages/analytics
+          pip install -e apps/api[dev]
+      - name: Pytest (runs Alembic migrations against the service container)
+        working-directory: apps/api
+        env:
+          TEST_DATABASE_URL: postgresql+asyncpg://gcol:gcol@localhost:5432/gcol_test
+        run: python -m pytest tests/ -q
+
+  openapi-drift:
+    name: OpenAPI contract drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install packages
+        run: |
+          pip install -e packages/analytics
+          pip install -e apps/api
+      - name: Export OpenAPI schema from the app
+        working-directory: apps/api
+        run: python scripts/export_openapi.py
+      - name: Fail if the checked-in schema is stale
+        run: |
+          git diff --exit-code packages/shared/openapi/openapi.json || {
+            echo "::error::packages/shared/openapi/openapi.json is out of date." \
+              "Run apps/api/scripts/export_openapi.py and 'npm run generate-types' in apps/web, then commit."
+            exit 1
+          }
