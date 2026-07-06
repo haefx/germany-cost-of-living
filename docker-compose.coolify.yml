@@ -48,6 +48,9 @@ services:
 
   api:
     image: ghcr.io/haefx/germany-cost-of-living-api:latest
+    # Without this, compose keeps a previously pulled :latest forever and
+    # redeploys silently run stale code.
+    pull_policy: always
     restart: unless-stopped
     depends_on:
       postgres:
@@ -65,6 +68,7 @@ services:
 
   web:
     image: ghcr.io/haefx/germany-cost-of-living-web:latest
+    pull_policy: always
     restart: unless-stopped
     depends_on:
       - api
