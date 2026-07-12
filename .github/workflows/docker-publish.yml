@@ -30,7 +30,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push api image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: infrastructure/docker/api.Dockerfile
@@ -39,7 +39,7 @@ jobs:
             ghcr.io/${{ github.repository }}-api:latest
             ghcr.io/${{ github.repository }}-api:${{ github.sha }}
       - name: Build and push web image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: infrastructure/docker/web.Dockerfile
