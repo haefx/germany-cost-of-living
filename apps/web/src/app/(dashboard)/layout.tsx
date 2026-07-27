@@ -7,17 +7,19 @@ import { Topbar } from "@/components/layout/topbar";
 import { useSession } from "@/hooks/use-session";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { data: user, isLoading } = useSession();
+  const { data: user, isPending } = useSession();
 
   useEffect(() => {
-    if (!isLoading && user === null) {
+    if (!isPending && !user) {
       // The API is the authority on session validity. A hard navigation also
       // clears any prefetched dashboard state after an expired/revoked cookie.
+      // Treat query errors like an absent user so auth failures can never
+      // leave the dashboard on an endless loading screen.
       window.location.replace("/login");
     }
-  }, [isLoading, user]);
+  }, [isPending, user]);
 
-  if (isLoading || !user) {
+  if (isPending || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center text-sm text-[var(--color-ink-secondary)]">
         Wird geladen …
