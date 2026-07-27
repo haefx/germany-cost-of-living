@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const SESSION_COOKIE = "gcol_session";
+const SESSION_COOKIE = "gcol_session_v2";
 const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password"];
 
 /** Redirects based on session-cookie *presence* only — a cheap, purely
@@ -17,10 +17,6 @@ export function proxy(request: NextRequest) {
   if (!hasSession && !isAuthPath) {
     const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
-  }
-
-  if (hasSession && isAuthPath) {
-    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();

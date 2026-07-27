@@ -16,7 +16,7 @@ from app.services.demo_service import expire_demo_users, provision_demo_user
 async def test_starting_a_demo_session_logs_in_immediately(client: AsyncClient) -> None:
     response = await client.post("/api/demo/start")
     assert response.status_code == 204
-    assert "gcol_session" in response.cookies
+    assert "gcol_session_v2" in response.cookies
 
     me_response = await client.get("/api/users/me")
     assert me_response.status_code == 200

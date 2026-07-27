@@ -21,9 +21,14 @@ from ..models.user import AccessToken
 settings = get_settings()
 
 SESSION_LIFETIME_SECONDS = 60 * 60 * 24 * 30  # 30 days
+# Version the cookie name when its domain/path semantics change. Browsers may
+# otherwise retain both a host-only and a parent-domain cookie with the same
+# name and send both; cookie parsers then have no reliable way to know which
+# token is current.
+SESSION_COOKIE_NAME = "gcol_session_v2"
 
 cookie_transport = CookieTransport(
-    cookie_name="gcol_session",
+    cookie_name=SESSION_COOKIE_NAME,
     cookie_max_age=SESSION_LIFETIME_SECONDS,
     cookie_secure=settings.cookie_secure,
     cookie_httponly=True,

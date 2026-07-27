@@ -1926,7 +1926,7 @@
     "securitySchemes": {
       "APIKeyCookie": {
         "in": "cookie",
-        "name": "gcol_session",
+        "name": "gcol_session_v2",
         "type": "apiKey"
       }
     }

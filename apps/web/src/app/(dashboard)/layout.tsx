@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { Sidebar } from "@/components/layout/sidebar";
@@ -9,13 +8,14 @@ import { useSession } from "@/hooks/use-session";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: user, isLoading } = useSession();
-  const router = useRouter();
 
   useEffect(() => {
     if (!isLoading && user === null) {
-      router.replace("/login");
+      // The API is the authority on session validity. A hard navigation also
+      // clears any prefetched dashboard state after an expired/revoked cookie.
+      window.location.replace("/login");
     }
-  }, [isLoading, user, router]);
+  }, [isLoading, user]);
 
   if (isLoading || !user) {
     return (

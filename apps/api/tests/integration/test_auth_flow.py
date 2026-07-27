@@ -33,7 +33,7 @@ async def test_login_with_correct_password_succeeds(client: AsyncClient) -> None
         data={"username": "bob@example.com", "password": "correct-horse-battery"},
     )
     assert response.status_code == 204
-    assert "gcol_session" in response.cookies
+    assert "gcol_session_v2" in response.cookies
 
 
 async def test_login_with_wrong_password_gives_generic_error(client: AsyncClient) -> None:
