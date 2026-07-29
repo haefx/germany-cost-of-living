@@ -14,7 +14,7 @@ Konto wird nach 24 Stunden automatisch gelöscht.
 
 ## Produkt
 
-![Übersicht des Haushaltsplaners](docs/screenshots/overview.png)
+![Aktuelle Übersicht des Haushaltsplaners](docs/screenshots/dashboard-overview-v2.png)
 
 Das Dashboard trennt bewusst drei Kennzahlen:
 
@@ -30,7 +30,7 @@ nach Kalendermonat vier- oder fünfmal.
 
 ### Sparziele und Zinseszins
 
-![Sparziel mit Zinseszins-Simulation](docs/screenshots/savings-goals.png)
+![Aktuelles Sparziel mit Zinseszins-Simulation](docs/screenshots/savings-simulation-v2.png)
 
 Eine wiederkehrende Sparausgabe kann direkt mit einem Sparziel verknüpft
 werden. Die Planung unterstützt:
@@ -47,7 +47,7 @@ Inflation sind nicht enthalten; die Darstellung ist keine Anlageberatung.
 
 ### Städtevergleich
 
-![Städtevergleich mit verfügbaren Einkommen und Kostenstruktur](docs/screenshots/city-comparison.png)
+![Aktueller Städtevergleich mit verfügbarem Einkommen und Kostenstruktur](docs/screenshots/city-comparison-v2.png)
 
 Der Städtevergleich zeigt verfügbares Einkommen, Mietbelastung und
 Kostenstruktur für zehn deutsche Städte. Referenzjahr und Datenquelle bleiben
