@@ -21,7 +21,7 @@ export interface MonthlyTotalsPoint {
 
 export function IncomeExpenseTrendChart({ data }: { data: MonthlyTotalsPoint[] }) {
   return (
-    <div className="h-64">
+    <div className="h-72">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
           <CartesianGrid stroke="var(--color-gridline)" vertical={false} />
@@ -51,16 +51,16 @@ export function IncomeExpenseTrendChart({ data }: { data: MonthlyTotalsPoint[] }
             dataKey="einnahmen"
             name="Einnahmen"
             stroke="var(--color-series-2)"
-            strokeWidth={2}
-            dot={{ r: 3 }}
+            strokeWidth={2.6}
+            dot={{ r: 3, fill: "white", strokeWidth: 2 }}
           />
           <Line
             type="monotone"
             dataKey="ausgaben"
             name="Ausgaben"
             stroke="var(--color-series-6)"
-            strokeWidth={2}
-            dot={{ r: 3 }}
+            strokeWidth={2.6}
+            dot={{ r: 3, fill: "white", strokeWidth: 2 }}
           />
         </LineChart>
       </ResponsiveContainer>

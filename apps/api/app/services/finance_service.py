@@ -60,6 +60,10 @@ class ContributionNotFoundError(Exception):
     pass
 
 
+class LinkedExpenseNotFoundError(Exception):
+    pass
+
+
 # --- Income ---
 
 
@@ -190,8 +194,16 @@ async def list_budget_statuses(
 
 
 async def create_savings_goal(
-    goal_repo: SavingsGoalRepository, user_id: uuid.UUID, data: SavingsGoalCreate
+    goal_repo: SavingsGoalRepository,
+    expense_repo: ExpenseRepository,
+    user_id: uuid.UUID,
+    data: SavingsGoalCreate,
 ) -> SavingsGoal:
+    if (
+        data.linked_expense_id is not None
+        and await expense_repo.get(user_id, data.linked_expense_id) is None
+    ):
+        raise LinkedExpenseNotFoundError
     return await goal_repo.create(user_id, **data.model_dump())
 
 
@@ -223,12 +235,14 @@ def _project_completion_date(
 ) -> date | None:
     if current_amount >= goal.target_amount:
         return max((c.contributed_on for c in contributions), default=date.today())
-    if not contributions:
+    if goal.monthly_contribution:
+        avg_monthly_rate = goal.monthly_contribution
+    elif contributions:
+        first_contribution_date = min(c.contributed_on for c in contributions)
+        months_elapsed = max(1, _months_between(first_contribution_date, date.today()))
+        avg_monthly_rate = current_amount / months_elapsed
+    else:
         return None
-
-    first_contribution_date = min(c.contributed_on for c in contributions)
-    months_elapsed = max(1, _months_between(first_contribution_date, date.today()))
-    avg_monthly_rate = current_amount / months_elapsed
     if avg_monthly_rate <= 0:
         return None
 
@@ -241,7 +255,16 @@ async def goal_progress(
     contribution_repo: SavingsGoalContributionRepository, goal: SavingsGoal
 ) -> SavingsGoalProgressRead:
     contributions = await contribution_repo.list_for_goal(goal.user_id, goal.id)
-    current_amount = sum((c.amount for c in contributions), Decimal("0.00"))
+    special_contributions = sum((c.amount for c in contributions), Decimal("0.00"))
+    scheduled_contributions = Decimal("0.00")
+    if goal.monthly_contribution and goal.contribution_start_date:
+        completed_months = (
+            0
+            if goal.contribution_start_date > date.today()
+            else _months_between(goal.contribution_start_date, date.today()) + 1
+        )
+        scheduled_contributions = goal.monthly_contribution * completed_months
+    current_amount = special_contributions + scheduled_contributions
     progress_pct = (
         (current_amount / goal.target_amount * 100) if goal.target_amount > 0 else Decimal("0")
     )

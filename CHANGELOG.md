@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Household finance CRUD: income, expenses, categories, recurrence rules,
   budgets, savings goals with contribution ledgers; CSV import/export and
   full account export/deletion.
-- Deterministic insights engine with ten rule-based checks (no AI).
+- Deterministic insights engine with ten reproducible, rule-based checks.
 - City comparison across ten German cities with visible data provenance
   (source, reference year, import run, validation findings).
 - Postal-code lookup via zippopotam.us with graceful degradation.

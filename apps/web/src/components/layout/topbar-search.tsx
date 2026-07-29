@@ -23,7 +23,7 @@ export function TopbarSearch() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="hidden max-w-sm flex-1 md:flex" role="search">
+    <form onSubmit={handleSubmit} className="hidden max-w-md flex-1 md:flex" role="search">
       <label htmlFor="topbar-search" className="sr-only">
         {t("searchPlaceholder")}
       </label>
@@ -38,7 +38,7 @@ export function TopbarSearch() {
           value={value}
           onChange={(event) => setValue(event.target.value)}
           placeholder={t("searchPlaceholder")}
-          className="h-9 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-page)] pl-9 pr-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)]"
+          className="h-10 w-full rounded-lg border border-[var(--color-border)] bg-[#f7f9fc] pl-9 pr-3 text-sm shadow-inner shadow-slate-100/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)]"
         />
       </div>
     </form>

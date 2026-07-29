@@ -147,6 +147,14 @@ class SavingsGoal(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     name: Mapped[str] = mapped_column(String(200), nullable=False)
     target_amount: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     target_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    template_key: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    annual_return_min_pct: Mapped[Decimal | None] = mapped_column(Numeric(5, 2), nullable=True)
+    annual_return_max_pct: Mapped[Decimal | None] = mapped_column(Numeric(5, 2), nullable=True)
+    monthly_contribution: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True)
+    contribution_start_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    linked_expense_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("expense_entry.id", ondelete="SET NULL"), nullable=True
+    )
     category_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("category.id", ondelete="SET NULL"), nullable=True
     )

@@ -1501,6 +1501,40 @@
       },
       "SavingsGoalCreate": {
         "properties": {
+          "annual_return_max_pct": {
+            "anyOf": [
+              {
+                "maximum": 30.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Return Max Pct"
+          },
+          "annual_return_min_pct": {
+            "anyOf": [
+              {
+                "maximum": 30.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Return Min Pct"
+          },
           "category_id": {
             "anyOf": [
               {
@@ -1512,6 +1546,46 @@
               }
             ],
             "title": "Category Id"
+          },
+          "contribution_start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contribution Start Date"
+          },
+          "linked_expense_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linked Expense Id"
+          },
+          "monthly_contribution": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,2}0*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Contribution"
           },
           "name": {
             "maxLength": 200,
@@ -1543,6 +1617,18 @@
               }
             ],
             "title": "Target Date"
+          },
+          "template_key": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Key"
           }
         },
         "required": [
@@ -1591,6 +1677,30 @@
       },
       "SavingsGoalRead": {
         "properties": {
+          "annual_return_max_pct": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Return Max Pct"
+          },
+          "annual_return_min_pct": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Return Min Pct"
+          },
           "archived_at": {
             "anyOf": [
               {
@@ -1615,10 +1725,46 @@
             ],
             "title": "Category Id"
           },
+          "contribution_start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contribution Start Date"
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
             "type": "string"
+          },
+          "linked_expense_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linked Expense Id"
+          },
+          "monthly_contribution": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Contribution"
           },
           "name": {
             "title": "Name",
@@ -1640,6 +1786,17 @@
               }
             ],
             "title": "Target Date"
+          },
+          "template_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Key"
           }
         },
         "required": [
@@ -1647,6 +1804,12 @@
           "name",
           "target_amount",
           "target_date",
+          "template_key",
+          "annual_return_min_pct",
+          "annual_return_max_pct",
+          "monthly_contribution",
+          "contribution_start_date",
+          "linked_expense_id",
           "category_id",
           "archived_at"
         ],
@@ -1655,6 +1818,40 @@
       },
       "SavingsGoalUpdate": {
         "properties": {
+          "annual_return_max_pct": {
+            "anyOf": [
+              {
+                "maximum": 30.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Return Max Pct"
+          },
+          "annual_return_min_pct": {
+            "anyOf": [
+              {
+                "maximum": 30.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Return Min Pct"
+          },
           "archived_at": {
             "anyOf": [
               {
@@ -1666,6 +1863,34 @@
               }
             ],
             "title": "Archived At"
+          },
+          "contribution_start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contribution Start Date"
+          },
+          "monthly_contribution": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,2}0*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Contribution"
           },
           "name": {
             "anyOf": [
@@ -1707,6 +1932,18 @@
               }
             ],
             "title": "Target Date"
+          },
+          "template_key": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Key"
           }
         },
         "title": "SavingsGoalUpdate",

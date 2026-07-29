@@ -39,6 +39,8 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+.claude/
+.test-tmp/
 
 # Logs
 *.log

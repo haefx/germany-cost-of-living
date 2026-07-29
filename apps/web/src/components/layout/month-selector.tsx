@@ -12,7 +12,9 @@ import { formatMonth, monthParam } from "@/lib/format";
 export function useSelectedMonth(): { month: Date; monthValue: string } {
   const searchParams = useSearchParams();
   const raw = searchParams.get("month");
-  const month = raw ? new Date(`${raw}T00:00:00`) : new Date();
+  const isValidMonth = raw ? /^\d{4}-(0[1-9]|1[0-2])-01$/.test(raw) : false;
+  const candidate = isValidMonth ? new Date(`${raw}T00:00:00`) : new Date();
+  const month = Number.isNaN(candidate.getTime()) ? new Date() : candidate;
   return { month, monthValue: monthParam(month) };
 }
 

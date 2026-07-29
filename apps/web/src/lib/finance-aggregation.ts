@@ -1,7 +1,10 @@
 import type { ExpenseEntry, IncomeEntry } from "@/lib/api-types";
 
 export function sumAmounts(entries: Array<{ amount: string }>): number {
-  return entries.reduce((total, entry) => total + Number.parseFloat(entry.amount), 0);
+  return entries.reduce((total, entry) => {
+    const amount = Number.parseFloat(entry.amount);
+    return Number.isFinite(amount) ? total + amount : total;
+  }, 0);
 }
 
 export function groupExpensesByCategory(
@@ -11,7 +14,8 @@ export function groupExpensesByCategory(
   for (const entry of entries) {
     const key = entry.category_id ?? "uncategorized";
     const existing = groups.get(key);
-    const amount = Number.parseFloat(entry.amount);
+    const parsedAmount = Number.parseFloat(entry.amount);
+    const amount = Number.isFinite(parsedAmount) ? parsedAmount : 0;
     if (existing) {
       existing.total += amount;
     } else {
@@ -21,9 +25,9 @@ export function groupExpensesByCategory(
   return groups;
 }
 
-export function savingsRate(totalIncome: number, totalExpenses: number): number | null {
+export function savingsRate(totalIncome: number, savingsAmount: number): number | null {
   if (totalIncome <= 0) return null;
-  return ((totalIncome - totalExpenses) / totalIncome) * 100;
+  return (savingsAmount / totalIncome) * 100;
 }
 
 export function previousMonthsOf(month: Date, count: number): Date[] {

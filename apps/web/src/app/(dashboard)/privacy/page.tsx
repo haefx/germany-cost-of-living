@@ -8,7 +8,7 @@ const SECTIONS = [
   { titleKey: "whatIsStored", textKey: "whatIsStoredText" },
   { titleKey: "whyStored", textKey: "whyStoredText" },
   { titleKey: "retention", textKey: "retentionText" },
-  { titleKey: "aiTitle", textKey: "aiText" },
+  { titleKey: "automationTitle", textKey: "automationText" },
   { titleKey: "exportTitle", textKey: "exportText" },
 ] as const;
 

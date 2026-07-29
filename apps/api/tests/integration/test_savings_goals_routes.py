@@ -116,3 +116,47 @@ async def test_delete_contribution(client: AsyncClient) -> None:
 
     list_response = await client.get("/api/savings-goals")
     assert list_response.json()[0]["current_amount"] == "0.00"
+
+
+async def test_linked_expense_must_belong_to_goal_owner(client: AsyncClient) -> None:
+    await register_and_login(client, "goal-owner-a@example.com")
+    expense_response = await client.post(
+        "/api/expenses",
+        json={
+            "label": "Depotrate",
+            "amount": "75.00",
+            "entry_date": "2026-07-01",
+            "is_recurring": False,
+        },
+    )
+    expense_id = expense_response.json()["id"]
+
+    await client.post("/api/auth/logout")
+    await register_and_login(client, "goal-owner-b@example.com")
+    response = await client.post(
+        "/api/savings-goals",
+        json={
+            "name": "Fremde Verknüpfung",
+            "target_amount": "10000.00",
+            "linked_expense_id": expense_id,
+        },
+    )
+
+    assert response.status_code == 404
+
+
+async def test_monthly_goal_does_not_count_before_its_start_date(client: AsyncClient) -> None:
+    await register_and_login(client, "goal-future@example.com")
+    response = await client.post(
+        "/api/savings-goals",
+        json={
+            "name": "Zukünftiger Sparplan",
+            "target_amount": "10000.00",
+            "monthly_contribution": "75.00",
+            "contribution_start_date": "2099-01-01",
+        },
+    )
+    assert response.status_code == 201
+
+    progress = (await client.get("/api/savings-goals")).json()[0]
+    assert progress["current_amount"] == "0.00"

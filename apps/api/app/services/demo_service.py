@@ -24,6 +24,8 @@ from ..models.finance import (
     ExpenseEntry,
     IncomeEntry,
     IncomeSource,
+    RecurrenceFrequency,
+    RecurrenceRule,
     SavingsGoal,
     SavingsGoalContribution,
 )
@@ -67,6 +69,16 @@ async def _seed_demo_household(session: AsyncSession, user_id: uuid.UUID) -> Non
     utilities = await _global_category_id(session, "Nebenkosten")
     subscriptions = await _global_category_id(session, "Abos")
     leisure = await _global_category_id(session, "Freizeit")
+    savings = await _global_category_id(session, "Sparen")
+
+    monthly_rule = RecurrenceRule(
+        user_id=user_id,
+        frequency=RecurrenceFrequency.MONTHLY,
+        interval_count=1,
+        start_date=month_start,
+    )
+    session.add(monthly_rule)
+    await session.flush()
 
     session.add(
         IncomeEntry(
@@ -76,6 +88,7 @@ async def _seed_demo_household(session: AsyncSession, user_id: uuid.UUID) -> Non
             amount=Decimal("3450.00"),
             entry_date=month_start,
             is_recurring=True,
+            recurrence_rule_id=monthly_rule.id,
             source=IncomeSource.MANUAL,
         )
     )
@@ -86,18 +99,22 @@ async def _seed_demo_household(session: AsyncSession, user_id: uuid.UUID) -> Non
         (groceries, "Lebensmittel", Decimal("320.00")),
         (subscriptions, "Streaming-Abo", Decimal("65.00")),
         (leisure, "Fitnessstudio", Decimal("35.00")),
+        (savings, "ETF-Sparplan", Decimal("75.00")),
     ]
+    savings_expense: ExpenseEntry | None = None
     for category_id, label, amount in demo_expenses:
-        session.add(
-            ExpenseEntry(
-                user_id=user_id,
-                category_id=category_id,
-                label=label,
-                amount=amount,
-                entry_date=month_start,
-                is_recurring=True,
-            )
+        expense = ExpenseEntry(
+            user_id=user_id,
+            category_id=category_id,
+            label=label,
+            amount=amount,
+            entry_date=month_start,
+            is_recurring=True,
+            recurrence_rule_id=monthly_rule.id,
         )
+        session.add(expense)
+        if category_id == savings:
+            savings_expense = expense
 
     session.add(
         Budget(
@@ -108,11 +125,19 @@ async def _seed_demo_household(session: AsyncSession, user_id: uuid.UUID) -> Non
         )
     )
 
+    await session.flush()
     goal = SavingsGoal(
         user_id=user_id,
-        name="Notgroschen",
-        target_amount=Decimal("5000.00"),
-        target_date=today.replace(year=today.year + 1),
+        name="ETF-Vermögensaufbau",
+        target_amount=Decimal("50000.00"),
+        target_date=today.replace(year=today.year + 10),
+        template_key="global_equity",
+        annual_return_min_pct=Decimal("4.00"),
+        annual_return_max_pct=Decimal("7.00"),
+        monthly_contribution=Decimal("75.00"),
+        contribution_start_date=month_start,
+        linked_expense_id=savings_expense.id if savings_expense else None,
+        category_id=savings,
     )
     session.add(goal)
     await session.flush()

@@ -30,7 +30,7 @@ export function InsightCard({ insight }: { insight: Insight }) {
     insight.estimated_savings_max !== null && Number.parseFloat(insight.estimated_savings_max) > 0;
 
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-white p-4 shadow-sm">
+    <div className="rounded-xl border border-[var(--color-gridline)] bg-[#f9fbfe] p-3.5">
       <div className="flex items-start gap-3">
         <Icon
           className={cn("mt-0.5 h-4 w-4 shrink-0", SEVERITY_STYLES[severity])}
