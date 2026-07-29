@@ -8,7 +8,7 @@ import { UserMenu } from "./user-menu";
 
 export function Topbar() {
   return (
-    <header className="flex h-16 items-center gap-3 border-b border-[var(--color-border)] bg-white px-4 md:px-6">
+    <header className="sticky top-0 z-30 flex h-20 items-center gap-3 border-b border-[var(--color-border)] bg-white/95 px-4 backdrop-blur-xl md:px-7">
       <MobileNavDrawer />
       <Suspense fallback={<div className="hidden max-w-sm flex-1 md:block" />}>
         <TopbarSearch />

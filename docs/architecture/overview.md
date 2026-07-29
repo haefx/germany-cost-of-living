@@ -103,8 +103,8 @@ expenses, category-share change, missing categories, savings-goal delay, high
 rent burden, negative cash flow, outdated reference data, missing inputs),
 each returning typed `Insight` objects with severity, evidence, estimated
 savings range, assumptions, and a disclaimer. The engine isolates per-rule
-exceptions so one failing rule cannot break the endpoint. No AI anywhere —
-deliberately (see the roadmap).
+exceptions so one failing rule cannot break the endpoint. All evaluations
+remain deterministic, inspectable, and reproducible.
 
 ## Frontend
 

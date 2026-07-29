@@ -28,4 +28,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)" || exit 1
 
 COPY --chown=appuser:appuser infrastructure/docker/api-entrypoint.sh /app/api-entrypoint.sh
+# Defensive normalization for Windows build contexts. .gitattributes keeps
+# tracked files on LF; this also protects builds from locally rewritten files.
+RUN sed -i 's/\r$//' /app/api-entrypoint.sh
 ENTRYPOINT ["sh", "/app/api-entrypoint.sh"]

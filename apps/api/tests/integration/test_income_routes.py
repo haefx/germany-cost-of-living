@@ -87,6 +87,28 @@ async def test_recurring_entry_appears_in_a_later_months_listing(client: AsyncCl
     assert entry_id in june_ids
 
 
+async def test_weekly_recurring_entry_is_aggregated_by_occurrences(client: AsyncClient) -> None:
+    await register_and_login(client, "income-weekly@example.com")
+    await client.post(
+        "/api/income",
+        json={
+            "label": "Wochenverdienst",
+            "amount": "100.00",
+            "entry_date": "2026-06-01",
+            "is_recurring": True,
+            "recurrence": {
+                "frequency": "weekly",
+                "interval_count": 1,
+                "start_date": "2026-06-01",
+            },
+        },
+    )
+
+    response = await client.get("/api/income", params={"month": "2026-06-01"})
+    assert response.status_code == 200
+    assert response.json()[0]["amount"] == "500.00"
+
+
 async def test_update_income_entry(client: AsyncClient) -> None:
     await register_and_login(client, "income-f@example.com")
     create_response = await client.post(

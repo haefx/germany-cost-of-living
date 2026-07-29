@@ -24,13 +24,13 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             onClick={onNavigate}
             aria-current={isActive ? "page" : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+              "flex min-h-12 items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all",
               isActive
-                ? "bg-[color-mix(in_srgb,var(--color-brand)_12%,white)] text-[var(--color-brand-dark)]"
-                : "text-[var(--color-ink-secondary)] hover:bg-[var(--color-page)]"
+                ? "bg-gradient-to-r from-[#1b5188] to-[#215d9b] text-white shadow-[0_5px_14px_rgba(0,0,0,0.14)]"
+                : "text-[#d7e4f2] hover:bg-white/7 hover:text-white"
             )}
           >
-            <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <Icon className="h-[19px] w-[19px] shrink-0" strokeWidth={1.8} aria-hidden="true" />
             {t(item.labelKey)}
           </Link>
         );

@@ -994,14 +994,26 @@ export interface components {
         };
         /** SavingsGoalCreate */
         SavingsGoalCreate: {
+            /** Annual Return Max Pct */
+            annual_return_max_pct?: number | string | null;
+            /** Annual Return Min Pct */
+            annual_return_min_pct?: number | string | null;
             /** Category Id */
             category_id?: string | null;
+            /** Contribution Start Date */
+            contribution_start_date?: string | null;
+            /** Linked Expense Id */
+            linked_expense_id?: string | null;
+            /** Monthly Contribution */
+            monthly_contribution?: number | string | null;
             /** Name */
             name: string;
             /** Target Amount */
             target_amount: number | string;
             /** Target Date */
             target_date?: string | null;
+            /** Template Key */
+            template_key?: string | null;
         };
         /** SavingsGoalProgressRead */
         SavingsGoalProgressRead: {
@@ -1015,32 +1027,54 @@ export interface components {
         };
         /** SavingsGoalRead */
         SavingsGoalRead: {
+            /** Annual Return Max Pct */
+            annual_return_max_pct: string | null;
+            /** Annual Return Min Pct */
+            annual_return_min_pct: string | null;
             /** Archived At */
             archived_at: string | null;
             /** Category Id */
             category_id: string | null;
+            /** Contribution Start Date */
+            contribution_start_date: string | null;
             /**
              * Id
              * Format: uuid
              */
             id: string;
+            /** Linked Expense Id */
+            linked_expense_id: string | null;
+            /** Monthly Contribution */
+            monthly_contribution: string | null;
             /** Name */
             name: string;
             /** Target Amount */
             target_amount: string;
             /** Target Date */
             target_date: string | null;
+            /** Template Key */
+            template_key: string | null;
         };
         /** SavingsGoalUpdate */
         SavingsGoalUpdate: {
+            /** Annual Return Max Pct */
+            annual_return_max_pct?: number | string | null;
+            /** Annual Return Min Pct */
+            annual_return_min_pct?: number | string | null;
             /** Archived At */
             archived_at?: string | null;
+            /** Contribution Start Date */
+            contribution_start_date?: string | null;
+            /** Monthly Contribution */
+            monthly_contribution?: number | string | null;
             /** Name */
             name?: string | null;
             /** Target Amount */
             target_amount?: number | string | null;
             /** Target Date */
             target_date?: string | null;
+            /** Template Key */
+            template_key?: string | null;
         };
         /** UserCreate */
         UserCreate: {

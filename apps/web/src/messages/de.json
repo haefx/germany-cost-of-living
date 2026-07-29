@@ -198,8 +198,8 @@
     "whyStoredText": "Ausschließlich um dir deine eigene Auswertung anzuzeigen. Es findet keine Weitergabe an Dritte statt.",
     "retention": "Wie lange werden Daten aufbewahrt?",
     "retentionText": "Deine Daten bleiben gespeichert, bis du sie löschst oder dein Konto löschst. Demo-Konten werden automatisch nach 24 Stunden entfernt.",
-    "aiTitle": "Optionale KI-Auswertung",
-    "aiText": "Diese Version enthält keine KI-Anbindung. Alle Auswertungen sind regelbasiert und laufen vollständig lokal auf dem Server, ohne externe Übertragung.",
+    "automationTitle": "Automatisierte Auswertung",
+    "automationText": "Alle Auswertungen sind regelbasiert, nachvollziehbar und laufen vollständig auf dem eigenen Server, ohne externe Übertragung.",
     "exportTitle": "Export und Löschung",
     "exportText": "Du kannst jederzeit alle deine Daten exportieren oder dein Konto vollständig löschen (siehe Einstellungen)."
   },

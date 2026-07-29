@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -27,6 +28,18 @@ class Settings(BaseSettings):
     cookie_domain: str = ""
     cors_origins: str = "http://localhost:3000"
     demo_household_ttl_hours: int = 24
+
+    @model_validator(mode="after")
+    def _secure_production_settings(self) -> Settings:
+        if not self.is_production:
+            return self
+        if self.session_secret == "insecure-development-secret-do-not-use-in-production":
+            raise ValueError("SESSION_SECRET must be explicitly set in production")
+        if len(self.session_secret) < 32:
+            raise ValueError("SESSION_SECRET must contain at least 32 characters in production")
+        if not self.cookie_secure:
+            raise ValueError("COOKIE_SECURE must be true in production")
+        return self
 
     @property
     def cors_origin_list(self) -> list[str]:

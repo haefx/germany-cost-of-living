@@ -8,10 +8,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..deps import (
     CurrentUser,
+    get_expense_repository,
     get_savings_goal_contribution_repository,
     get_savings_goal_repository,
 )
-from ..repositories.finance import SavingsGoalContributionRepository, SavingsGoalRepository
+from ..repositories.finance import (
+    ExpenseRepository,
+    SavingsGoalContributionRepository,
+    SavingsGoalRepository,
+)
 from ..schemas.finance import (
     SavingsGoalContributionCreate,
     SavingsGoalContributionRead,
@@ -42,8 +47,12 @@ async def create_savings_goal(
     data: SavingsGoalCreate,
     user: CurrentUser,
     repo: SavingsGoalRepository = Depends(get_savings_goal_repository),
+    expense_repo: ExpenseRepository = Depends(get_expense_repository),
 ) -> SavingsGoalRead:
-    goal = await finance_service.create_savings_goal(repo, user.id, data)
+    try:
+        goal = await finance_service.create_savings_goal(repo, expense_repo, user.id, data)
+    except finance_service.LinkedExpenseNotFoundError as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Linked expense not found") from exc
     return SavingsGoalRead.model_validate(goal)
 
 

@@ -1,13 +1,10 @@
 """Repositories for income, expenses, recurrence rules, budgets, and savings
 goals — all built on ``UserOwnedRepository``.
 
-Monthly aggregation (``list_for_month``) treats a recurring entry as
-contributing its stored ``amount`` once for every month its rule recurs
-into, regardless of frequency — a documented simplification: a weekly
-recurring entry is not multiplied by the number of weeks in the month. This
-keeps the common case (rent, subscriptions: monthly recurrence) exact while
-avoiding over-engineering proration for a rarely-used combination in a
-household finance tracker. See docs/phase-2-roadmap.md.
+Monthly aggregation (``list_for_month``) expands the associated recurrence
+rule and returns one monthly aggregate row. Weekly entries are multiplied by
+their actual occurrences in the month; monthly and yearly rules only appear
+in months in which they occur.
 """
 
 from __future__ import annotations
@@ -15,10 +12,12 @@ from __future__ import annotations
 import uuid
 from calendar import monthrange
 from datetime import date
+from types import SimpleNamespace
 from typing import Any
 
 from analytics.recurrence import RecurrenceRule as AnalyticsRecurrenceRule
 from analytics.recurrence import expand_occurrences
+from sqlalchemy import inspect as sa_inspect
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -55,11 +54,13 @@ async def _list_entries_for_month(
 
     direct_result = await session.execute(
         select(model).where(
-            model.user_id == user_id, model.entry_date >= start, model.entry_date <= end
+            model.user_id == user_id,
+            model.is_recurring.is_(False),
+            model.entry_date >= start,
+            model.entry_date <= end,
         )
     )
-    direct_entries = list(direct_result.scalars().all())
-    direct_ids = {entry.id for entry in direct_entries}
+    direct_entries: list[Any] = list(direct_result.scalars().all())
 
     recurring_result = await session.execute(
         select(model, RecurrenceRule)
@@ -67,14 +68,18 @@ async def _list_entries_for_month(
         .where(
             model.user_id == user_id,
             model.is_recurring.is_(True),
-            model.entry_date < start,
+            model.entry_date <= end,
         )
     )
     for entry, rule in recurring_result.all():
-        if entry.id in direct_ids:
-            continue
-        if expand_occurrences(_to_analytics_rule(rule), start, end):
-            direct_entries.append(entry)
+        occurrences = expand_occurrences(_to_analytics_rule(rule), start, end)
+        if occurrences:
+            monthly_entry = SimpleNamespace(
+                **{column.key: getattr(entry, column.key) for column in sa_inspect(model).columns}
+            )
+            monthly_entry.amount = entry.amount * len(occurrences)
+            monthly_entry.entry_date = occurrences[0]
+            direct_entries.append(monthly_entry)
 
     return direct_entries
 

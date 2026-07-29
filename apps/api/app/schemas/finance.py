@@ -181,6 +181,22 @@ class SavingsGoalCreate(BaseModel):
     target_amount: Decimal = Field(gt=0, decimal_places=2)
     target_date: date | None = None
     category_id: uuid.UUID | None = None
+    template_key: str | None = Field(default=None, max_length=50)
+    annual_return_min_pct: Decimal | None = Field(default=None, ge=0, le=30)
+    annual_return_max_pct: Decimal | None = Field(default=None, ge=0, le=30)
+    monthly_contribution: Decimal | None = Field(default=None, gt=0, decimal_places=2)
+    contribution_start_date: date | None = None
+    linked_expense_id: uuid.UUID | None = None
+
+    @model_validator(mode="after")
+    def _valid_return_range(self) -> SavingsGoalCreate:
+        if (
+            self.annual_return_min_pct is not None
+            and self.annual_return_max_pct is not None
+            and self.annual_return_min_pct > self.annual_return_max_pct
+        ):
+            raise ValueError("annual_return_min_pct must not exceed annual_return_max_pct")
+        return self
 
 
 class SavingsGoalUpdate(BaseModel):
@@ -188,6 +204,21 @@ class SavingsGoalUpdate(BaseModel):
     target_amount: Decimal | None = Field(default=None, gt=0, decimal_places=2)
     target_date: date | None = None
     archived_at: date | None = None
+    template_key: str | None = Field(default=None, max_length=50)
+    annual_return_min_pct: Decimal | None = Field(default=None, ge=0, le=30)
+    annual_return_max_pct: Decimal | None = Field(default=None, ge=0, le=30)
+    monthly_contribution: Decimal | None = Field(default=None, gt=0, decimal_places=2)
+    contribution_start_date: date | None = None
+
+    @model_validator(mode="after")
+    def _valid_return_range(self) -> SavingsGoalUpdate:
+        if (
+            self.annual_return_min_pct is not None
+            and self.annual_return_max_pct is not None
+            and self.annual_return_min_pct > self.annual_return_max_pct
+        ):
+            raise ValueError("annual_return_min_pct must not exceed annual_return_max_pct")
+        return self
 
 
 class SavingsGoalContributionCreate(BaseModel):
@@ -212,6 +243,12 @@ class SavingsGoalRead(BaseModel):
     name: str
     target_amount: Decimal
     target_date: date | None
+    template_key: str | None
+    annual_return_min_pct: Decimal | None
+    annual_return_max_pct: Decimal | None
+    monthly_contribution: Decimal | None
+    contribution_start_date: date | None
+    linked_expense_id: uuid.UUID | None
     category_id: uuid.UUID | None
     archived_at: date | None
 
