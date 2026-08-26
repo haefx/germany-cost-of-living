@@ -77,6 +77,8 @@ async def _list_entries_for_month(
             monthly_entry = SimpleNamespace(
                 **{column.key: getattr(entry, column.key) for column in sa_inspect(model).columns}
             )
+            monthly_entry.source_amount = entry.amount
+            monthly_entry.source_entry_date = entry.entry_date
             monthly_entry.amount = entry.amount * len(occurrences)
             monthly_entry.entry_date = occurrences[0]
             direct_entries.append(monthly_entry)

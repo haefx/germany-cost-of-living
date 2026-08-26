@@ -60,6 +60,67 @@ async def test_update_expense_entry(client: AsyncClient) -> None:
     assert update_response.json()["is_planned"] is True
 
 
+async def test_imported_expense_can_be_made_monthly_recurring(client: AsyncClient) -> None:
+    await register_and_login(client, "expense-recurring@example.com")
+    create_response = await client.post(
+        "/api/expenses",
+        json={"label": "Miete", "amount": "850", "entry_date": "2026-07-01"},
+    )
+    entry_id = create_response.json()["id"]
+
+    update_response = await client.patch(
+        f"/api/expenses/{entry_id}",
+        json={
+            "is_recurring": True,
+            "recurrence": {
+                "frequency": "monthly",
+                "interval_count": 1,
+                "start_date": "2026-07-01",
+            },
+        },
+    )
+
+    assert update_response.status_code == 200, update_response.text
+    assert update_response.json()["is_recurring"] is True
+    assert update_response.json()["recurrence"]["frequency"] == "monthly"
+
+    august_response = await client.get("/api/expenses", params={"month": "2026-08-01"})
+    assert august_response.status_code == 200
+    assert [entry["label"] for entry in august_response.json()] == ["Miete"]
+    assert august_response.json()[0]["entry_date"] == "2026-08-01"
+    assert august_response.json()[0]["source_entry_date"] == "2026-07-01"
+    assert august_response.json()[0]["source_amount"] == "850.00"
+
+
+async def test_recurring_expense_can_be_made_one_time(client: AsyncClient) -> None:
+    await register_and_login(client, "expense-one-time@example.com")
+    create_response = await client.post(
+        "/api/expenses",
+        json={
+            "label": "Abo",
+            "amount": "12",
+            "entry_date": "2026-07-15",
+            "is_recurring": True,
+            "recurrence": {
+                "frequency": "monthly",
+                "interval_count": 1,
+                "start_date": "2026-07-15",
+            },
+        },
+    )
+    entry_id = create_response.json()["id"]
+
+    update_response = await client.patch(
+        f"/api/expenses/{entry_id}", json={"is_recurring": False, "recurrence": None}
+    )
+
+    assert update_response.status_code == 200, update_response.text
+    assert update_response.json()["is_recurring"] is False
+    assert update_response.json()["recurrence_rule_id"] is None
+    august_response = await client.get("/api/expenses", params={"month": "2026-08-01"})
+    assert august_response.json() == []
+
+
 async def test_delete_expense_entry(client: AsyncClient) -> None:
     await register_and_login(client, "expense-e@example.com")
     create_response = await client.post(

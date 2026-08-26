@@ -800,8 +800,13 @@ export interface components {
             merchant: string | null;
             /** Notes */
             notes: string | null;
+            recurrence?: components["schemas"]["RecurrenceRuleRead"] | null;
             /** Recurrence Rule Id */
             recurrence_rule_id: string | null;
+            /** Source Amount */
+            source_amount?: string | null;
+            /** Source Entry Date */
+            source_entry_date?: string | null;
         };
         /** ExpenseEntryUpdate */
         ExpenseEntryUpdate: {
@@ -815,12 +820,15 @@ export interface components {
             entry_date?: string | null;
             /** Is Planned */
             is_planned?: boolean | null;
+            /** Is Recurring */
+            is_recurring?: boolean | null;
             /** Label */
             label?: string | null;
             /** Merchant */
             merchant?: string | null;
             /** Notes */
             notes?: string | null;
+            recurrence?: components["schemas"]["RecurrenceRuleCreate"] | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -956,6 +964,24 @@ export interface components {
              * Interval Count
              * @default 1
              */
+            interval_count: number;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+        };
+        /** RecurrenceRuleRead */
+        RecurrenceRuleRead: {
+            /** End Date */
+            end_date: string | null;
+            frequency: components["schemas"]["RecurrenceFrequency"];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Interval Count */
             interval_count: number;
             /**
              * Start Date

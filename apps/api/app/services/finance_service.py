@@ -64,6 +64,10 @@ class LinkedExpenseNotFoundError(Exception):
     pass
 
 
+class RecurrenceRequiredError(Exception):
+    pass
+
+
 # --- Income ---
 
 
@@ -116,13 +120,35 @@ async def create_expense_entry(
 
 async def update_expense_entry(
     expense_repo: ExpenseRepository,
+    rule_repo: RecurrenceRuleRepository,
     user_id: uuid.UUID,
     entry_id: uuid.UUID,
     data: ExpenseEntryUpdate,
 ) -> ExpenseEntry:
-    updated = await expense_repo.update(user_id, entry_id, **data.model_dump(exclude_unset=True))
+    entry = await expense_repo.get(user_id, entry_id)
+    if entry is None:
+        raise EntryNotFoundError
+
+    old_rule_id = entry.recurrence_rule_id
+    fields = data.model_dump(exclude_unset=True, exclude={"recurrence"})
+    requested_recurring = fields.get("is_recurring", entry.is_recurring)
+
+    if data.recurrence is not None:
+        rule = await rule_repo.create(user_id, **data.recurrence.model_dump())
+        fields["recurrence_rule_id"] = rule.id
+        fields["is_recurring"] = True
+    elif requested_recurring:
+        if old_rule_id is None:
+            raise RecurrenceRequiredError
+    else:
+        fields["recurrence_rule_id"] = None
+
+    updated = await expense_repo.update(user_id, entry_id, **fields)
     if updated is None:
         raise EntryNotFoundError
+
+    if old_rule_id is not None and old_rule_id != updated.recurrence_rule_id:
+        await rule_repo.delete(user_id, old_rule_id)
     return updated
 
 

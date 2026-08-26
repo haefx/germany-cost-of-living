@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Info, Plus, Repeat, Trash2 } from "lucide-react";
+import { Download, Info, Pencil, Plus, Repeat, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
@@ -39,11 +39,13 @@ import {
   useCreateExpenseEntry,
   useDeleteExpenseEntry,
   useExpenseEntries,
+  useUpdateExpenseEntry,
 } from "@/hooks/use-expenses";
 import { downloadCsvExport } from "@/hooks/use-export";
 import { useCreateSavingsGoal } from "@/hooks/use-savings-goals";
 import { sumAmounts } from "@/lib/finance-aggregation";
 import { formatCurrency, formatDate } from "@/lib/format";
+import type { ExpenseEntry, ExpenseEntryUpdate } from "@/lib/api-types";
 import {
   findSavingsGoalTemplate,
   SAVINGS_GOAL_TEMPLATES,
@@ -59,11 +61,14 @@ function ExpensesContent() {
   const expenses = useExpenseEntries(monthValue);
   const categories = useCategories();
   const createEntry = useCreateExpenseEntry();
+  const updateEntry = useUpdateExpenseEntry();
   const deleteEntry = useDeleteExpenseEntry();
   const createGoal = useCreateSavingsGoal();
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [formValues, setFormValues] = useState<EntryFormValues>(emptyEntryFormValues);
+  const [editingEntry, setEditingEntry] = useState<ExpenseEntry | null>(null);
+  const [editFormValues, setEditFormValues] = useState<EntryFormValues>(emptyEntryFormValues);
   const [trackAsGoal, setTrackAsGoal] = useState(false);
   const [goalTarget, setGoalTarget] = useState("");
   const [goalDate, setGoalDate] = useState("");
@@ -110,6 +115,60 @@ function ExpensesContent() {
     setGoalTarget("");
     setGoalDate("");
     setGoalTemplate("cash");
+  }
+
+  function openEditDialog(entry: ExpenseEntry) {
+    updateEntry.reset();
+    setEditingEntry(entry);
+    setEditFormValues({
+      label: entry.label,
+      amount: entry.source_amount ?? entry.amount,
+      entryDate: entry.source_entry_date ?? entry.entry_date,
+      categoryId: entry.category_id,
+      isRecurring: entry.is_recurring,
+      frequency: entry.recurrence?.frequency ?? "monthly",
+    });
+  }
+
+  async function handleEditSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    if (!editingEntry) return;
+
+    const originalEntryDate = editingEntry.source_entry_date ?? editingEntry.entry_date;
+    const entryDateChanged = editFormValues.entryDate !== originalEntryDate;
+    const recurrenceChanged =
+      editFormValues.isRecurring &&
+      (!editingEntry.is_recurring ||
+        entryDateChanged ||
+        editFormValues.frequency !== editingEntry.recurrence?.frequency);
+    const data: ExpenseEntryUpdate = {
+      label: editFormValues.label,
+      amount: editFormValues.amount,
+      category_id: editFormValues.categoryId,
+      is_recurring: editFormValues.isRecurring,
+      recurrence: recurrenceChanged
+          ? {
+            frequency: editFormValues.frequency,
+            interval_count: editingEntry.recurrence?.interval_count ?? 1,
+            start_date: entryDateChanged
+              ? editFormValues.entryDate
+              : (editingEntry.recurrence?.start_date ?? editFormValues.entryDate),
+            end_date: editingEntry.recurrence?.end_date ?? null,
+          }
+        : null,
+    };
+
+    // Later-month recurring rows carry an occurrence date. Keep the original
+    // entry date unless the date field was intentionally changed.
+    if (!editingEntry.is_recurring || entryDateChanged) {
+      data.entry_date = editFormValues.entryDate;
+    }
+    if (editFormValues.isRecurring && !recurrenceChanged) {
+      delete data.recurrence;
+    }
+
+    await updateEntry.mutateAsync({ id: editingEntry.id, data });
+    setEditingEntry(null);
   }
 
   const allEntries = expenses.data ?? [];
@@ -298,14 +357,24 @@ function ExpensesContent() {
                         {formatCurrency(entry.amount)}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label={`${entry.label} löschen`}
-                          onClick={() => deleteEntry.mutate(entry.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-[var(--color-ink-muted)]" />
-                        </Button>
+                        <span className="inline-flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`${tCommon("edit")}: ${entry.label}`}
+                            onClick={() => openEditDialog(entry)}
+                          >
+                            <Pencil className="h-4 w-4 text-[var(--color-ink-muted)]" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`${entry.label} löschen`}
+                            onClick={() => deleteEntry.mutate(entry.id)}
+                          >
+                            <Trash2 className="h-4 w-4 text-[var(--color-ink-muted)]" />
+                          </Button>
+                        </span>
                       </td>
                     </tr>
                   ))}
@@ -315,6 +384,41 @@ function ExpensesContent() {
           )}
         </CardContent>
       </Card>
+
+      <Dialog
+        open={editingEntry !== null}
+        onOpenChange={(open) => {
+          if (!open) setEditingEntry(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("edit")}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleEditSubmit}>
+            <EntryFormFields
+              values={editFormValues}
+              onChange={setEditFormValues}
+              categories={categories.data ?? []}
+              kind="expense"
+              idPrefix="expense-edit"
+            />
+            {updateEntry.isError ? (
+              <p role="alert" className="mt-3 text-sm text-[var(--color-critical)]">
+                {tCommon("error")}
+              </p>
+            ) : null}
+            <DialogFooter>
+              <Button type="button" variant="secondary" onClick={() => setEditingEntry(null)}>
+                {tCommon("cancel")}
+              </Button>
+              <Button type="submit" disabled={updateEntry.isPending}>
+                {tCommon("save")}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

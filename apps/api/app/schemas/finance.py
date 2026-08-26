@@ -123,10 +123,18 @@ class ExpenseEntryUpdate(BaseModel):
     amount: Decimal | None = Field(default=None, gt=0, decimal_places=2)
     entry_date: date | None = None
     category_id: uuid.UUID | None = None
+    is_recurring: bool | None = None
+    recurrence: RecurrenceRuleCreate | None = None
     merchant: str | None = Field(default=None, max_length=200)
     notes: str | None = Field(default=None, max_length=2000)
     is_planned: bool | None = None
     budget_id: uuid.UUID | None = None
+
+    @model_validator(mode="after")
+    def _recurrence_not_allowed_when_disabled(self) -> ExpenseEntryUpdate:
+        if self.is_recurring is False and self.recurrence is not None:
+            raise ValueError("recurrence must be null when is_recurring is false")
+        return self
 
 
 class ExpenseEntryRead(BaseModel):
@@ -136,9 +144,12 @@ class ExpenseEntryRead(BaseModel):
     label: str
     amount: Decimal
     entry_date: date
+    source_amount: Decimal | None = None
+    source_entry_date: date | None = None
     category_id: uuid.UUID | None
     is_recurring: bool
     recurrence_rule_id: uuid.UUID | None
+    recurrence: RecurrenceRuleRead | None = None
     merchant: str | None
     notes: str | None
     is_planned: bool

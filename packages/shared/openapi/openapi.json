@@ -839,6 +839,16 @@
             ],
             "title": "Notes"
           },
+          "recurrence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecurrenceRuleRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "recurrence_rule_id": {
             "anyOf": [
               {
@@ -850,6 +860,30 @@
               }
             ],
             "title": "Recurrence Rule Id"
+          },
+          "source_amount": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Amount"
+          },
+          "source_entry_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Entry Date"
           }
         },
         "required": [
@@ -933,6 +967,17 @@
             ],
             "title": "Is Planned"
           },
+          "is_recurring": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Recurring"
+          },
           "label": {
             "anyOf": [
               {
@@ -969,6 +1014,16 @@
               }
             ],
             "title": "Notes"
+          },
+          "recurrence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecurrenceRuleCreate"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "title": "ExpenseEntryUpdate",
@@ -1419,6 +1474,48 @@
           "start_date"
         ],
         "title": "RecurrenceRuleCreate",
+        "type": "object"
+      },
+      "RecurrenceRuleRead": {
+        "properties": {
+          "end_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "frequency": {
+            "$ref": "#/components/schemas/RecurrenceFrequency"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "interval_count": {
+            "title": "Interval Count",
+            "type": "integer"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "frequency",
+          "interval_count",
+          "start_date",
+          "end_date"
+        ],
+        "title": "RecurrenceRuleRead",
         "type": "object"
       },
       "SavingsGoalContributionCreate": {
