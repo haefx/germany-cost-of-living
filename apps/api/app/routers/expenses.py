@@ -51,9 +51,7 @@ async def update_expense(
     rule_repo: RecurrenceRuleRepository = Depends(get_recurrence_rule_repository),
 ) -> ExpenseEntryRead:
     try:
-        entry = await finance_service.update_expense_entry(
-            repo, rule_repo, user.id, entry_id, data
-        )
+        entry = await finance_service.update_expense_entry(repo, rule_repo, user.id, entry_id, data)
     except finance_service.EntryNotFoundError as exc:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Expense entry not found") from exc
     except finance_service.RecurrenceRequiredError as exc:
